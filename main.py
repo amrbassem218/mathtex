@@ -1,7 +1,9 @@
 import os
 from subprocess import PIPE, run
 import sys
-import re
+from pandoc import get_problems_from_pandoc_tex
+import argparse
+from pathlib import Path
 
 def check_file_exists(path):
   if(not os.path.exists(path)):
@@ -12,27 +14,57 @@ def read_file(path):
   with open(path, 'r') as f:
     return f.read()
 
-def get_full_path(path):
-  cwd = os.getcwd()
-  full_path = os.path.join(cwd, path)
-  check_file_exists(full_path)
-  return full_path
 
+def main():
+  parser = argparse.ArgumentParser(
+    description="convert Latex Contests into HTML proble"
+  )
+
+  #(required)
+  parser.add_argument(
+    "input",
+    help="Latex contest file (.tex) file type"
+  )
+  parser.add_argument(
+    "source",
+    help="Source of .tex file (to know the nature of the algorithm to use)"
+  ) 
+
+  # (optional)
+  parser.add_argument(
+    '-o','--output',
+    help="Set the output directory",
+    default='/'
+  )
+  parser.add_argument(
+    '-t', '--type',
+    help="Get the type problems of .tex file either single or multiple",
+    choices=['single','multiple'],
+    default='multiple'
+  )
+  args = parser.parse_args()
   
-def main(path):
-  full_path = get_full_path(path) 
+  
+  # Getting path
+  full_path = Path(args.input).resolve()
+  if(not full_path.exists()):
+    raise Exception("File Path doesn't exist")
+  
+  # Getting file
   file_text = read_file(full_path)
   if(not file_text or len(file_text) == 0):
-    raise Exception("The file couldn't be read")
+    raise Exception("The file couldn't be read or it's empty")
   
-  problems = get_problems(file_text)
+  if(args.type == 'single'):
+    pass
+  elif(args.type == 'multiple'):
+    problems = "" 
+    match args.source:
+      case "pandoc":
+        problems = get_problems_from_pandoc_tex(file_text)
+     
+  else:
+    raise Exception("Argument type accepts only (single, multiple)")
+
 if __name__ == "__main__":
-  args = sys.argv
-  if len(args) != 2:
-    raise Exception("Enter 1 file only pls")
-  elif not args[1].endswith('.tex'):
-    raise Exception("Only accepts .tex files")
-  
-  path = args[1]
-  main(path)
-  
+  main() 
