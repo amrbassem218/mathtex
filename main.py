@@ -46,7 +46,6 @@ def get_html_from_tex(tex, output):
     if len(tex) == 0:
         return
     temp_file_path = check_and_create("temp.tex", True, tex)
-    output_dir = check_and_create(output, True)
     commands = [
         "pandoc",
         temp_file_path,
@@ -83,7 +82,7 @@ def main():
         default="multiple",
     )
     parser.add_argument(
-        "-r", "--replace", help="replace the output directory if present", default=None
+        "-r", "--replace", help="replace the output directory if present", default=False
     )
     args = parser.parse_args()
 
@@ -111,7 +110,7 @@ def main():
             print("Couldn't get problems or file doesn't contain any")
 
         
-        output_dir = check_and_create(args.output, True)
+        output_dir = check_and_create(args.output, args.replace)
         for i, problem in enumerate(problems):
             # print(i, problem)
             get_html_from_tex(problem['latex'], os.path.join(output_dir, f"{problem['title']}.tex"))
