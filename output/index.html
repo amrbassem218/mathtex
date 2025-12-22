@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+        },
+        svg: {
+          fontCache: "global",
+        },
+      };
+    </script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+    ></script>
+  </head>
+  <body>
+    <p>
+The values of $N$ that satisfy (ii) and (iii) are precisely the numbers of the form $N = (10^a-10^b)/9$ for $0\leq b<a\leq 2020$; this expression represents the integer with $a$ digits beginning with a string of $1$'s and ending with $b$ $0$'s. A value $N$ of this form is divisible by $2020 = 2^2 \cdot 5 \cdot 101$ if and only if $10^b(10^{a-b}-1)$ is divisible by each of $3^2$, $2^2\cdot 5$, and $101$. Divisibility by $3^2$ is a trivial condition since $10 \equiv 1 \pmod{9}$. Since $10^{a-b}-1$ is odd, divisibility by $2^2\cdot 5$ occurs if and only if $b \geq 2$. Finally, since $10^2 \equiv -1 \pmod{101}$, we see that $10^{a-b}$ is congruent to $10$, $-1$, $-10$, or $1 \pmod{101}$ depending on whether $a-b$ is congruent to $1$, $2$, $3$, or $0 \pmod{4}$; thus $10^{a-b}-1$ is divisible by $101$ if and only if $a-b$ is divisible by $4$.
+
+It follows that we need to count the number of $(a,b)$ with $2\leq b<a\leq 2020$ with $4\,|\,a-b$. For given $b$, there are $\lfloor \frac{2020-b}{4} \rfloor$ possible values of $a$. Thus the answer is
+\begin{align*}
+& 504+504+504+503+503+503+503+\cdots+1+1+1+1  \\
+&\quad = 4(504+503+\cdots+1)-504 = 504\cdot 1009 = 508536.
+\end{align*}
+
+    </p>
+  </body>
+</html>
