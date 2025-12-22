@@ -20,7 +20,7 @@ def read_file(path):
 
 # Check path if file/dir exists if not creates them, optionally takes text to add into files
 def check_and_create(path, replace, text=None):
-    final_path = str(Path(path).resolve())
+    final_path = Path(path).resolve()
     if not replace:
         counter = 1
         while os.path.exists(final_path):
@@ -30,11 +30,15 @@ def check_and_create(path, replace, text=None):
             elif os.path.isdir(final_path):
                 final_path = Path(f"temp{counter}/").resolve()
 
-    if os.path.isfile(final_path):
+    print("final_path:", final_path)
+    print("exists:", os.path.exists(final_path))
+    print("isdir:", os.path.isdir(final_path))
+    if final_path.suffix:
         with open(final_path, "w") as f:
             if text:
                 f.write(text)
-    elif not os.path.exists(final_path) and os.path.isdir(final_path):
+    
+    else:
         os.mkdir(final_path)
     return final_path
 
@@ -84,19 +88,18 @@ def main():
     args = parser.parse_args()
 
     # Getting path
-    full_path = Path(args.input).resolve()
-    if not full_path.exists():
-        raise Exception("File Path doesn't exist")
-
-    # Getting file
-    file_text = read_file(full_path)
-    if not file_text or len(file_text) == 0:
-        raise Exception("The file couldn't be read or it's empty")
-
     # parsing all paths 
     args.input = Path(args.input).resolve()
     args.output = Path(args.output).resolve()
-    
+    if not os.path.exists(args.input):
+        raise Exception("File Path doesn't exist")
+
+    # Getting input 
+    file_text = read_file(args.input)
+    if not file_text or len(file_text) == 0:
+        raise Exception("The file couldn't be read or it's empty")
+
+
     if args.type == "single":
         pass
     elif args.type == "multiple":
@@ -107,6 +110,7 @@ def main():
         if len(problems) == 0:
             print("Couldn't get problems or file doesn't contain any")
 
+        
         output_dir = check_and_create(args.output, True)
         for i, problem in enumerate(problems):
             # print(i, problem)
