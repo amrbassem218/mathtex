@@ -7,13 +7,9 @@ from pathlib import Path
 import re
 import json
 
-def check_file_exists(path):
+def read_file(path):
     if not os.path.exists(path):
         raise Exception("File doesn't exist")
-
-
-def read_file(path):
-    check_file_exists(path)
     with open(path, "r") as f:
         return f.read()
 
@@ -42,7 +38,7 @@ def check_and_create(path, replace, text=None):
         os.mkdir(final_path)
     return final_path
 
-def get_html_from_tex(tex, output):
+def get_html_from_tex(tex):
     if len(tex) == 0:
         return
     temp_file_path = check_and_create("temp.tex", True, tex)
@@ -57,7 +53,6 @@ def get_html_from_tex(tex, output):
     ]
     res = run(commands, stdin=PIPE, stdout=PIPE)
     return res.stdout
-
 
 def main():
     parser = argparse.ArgumentParser(
@@ -91,20 +86,20 @@ def main():
     if not os.path.exists(args.input):
         raise Exception("File Path doesn't exist")
 
-    file_text = read_file(args.input)
-    if not file_text or len(file_text) == 0:
+    input_text = read_file(args.input)
+    if not input_text or len(input_text) == 0:
         raise Exception("The file couldn't be read or it's empty")
 
     
     # Getting output
     if args.output == None: 
         args.output = args.input.name.split('.')[0] + '.json' 
-
-    p_output = Path(args.output) 
-    if len(p_output.suffix) == 0:
-        args.output = args.input.name.split('.')[0] + '.json' 
-        output_dir = check_and_create(p_output, args.replace)
-        args.output = os.path.join(output_dir, args.output)
+    else:
+        p_output = Path(args.output) 
+        if len(p_output.suffix) == 0:
+            args.output = args.input.name.split('.')[0] + '.json' 
+            output_dir = check_and_create(p_output, args.replace)
+            args.output = os.path.join(output_dir, args.output)
 
     args.output = Path(args.output)
     
@@ -115,7 +110,7 @@ def main():
         problems = []
         match args.source:
             case "pandoc":
-                problems = get_problems_from_pandoc_tex(file_text)
+                problems = get_problems_from_pandoc_tex(input_text)
         if len(problems) == 0:
             print("Couldn't get problems or file doesn't contain any")
 
@@ -123,7 +118,7 @@ def main():
         output = check_and_create(args.output, args.replace)
         for i, problem in enumerate(problems):
             # print(i, problem)
-            html = get_html_from_tex(problem['latex'], os.path.join(output, f"{problem['title']}.tex"))
+            html = get_html_from_tex(problem['latex'])
             problems[i]["html"] = html.decode('utf-8') 
         
         with open(output, 'w') as f:
