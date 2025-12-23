@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 import re
 import json
-
+from utils.database_action import Db_action
 def read_file(path):
     if not os.path.exists(path):
         raise Exception("File doesn't exist")
@@ -78,6 +78,12 @@ def main():
     parser.add_argument(
         "-r", "--replace", help="replace the output directory if present", default=False, action='store_true'
     )
+    parser.add_argument(
+        "-p","--push",
+        help="Push the problems to DB",
+        default=False,
+        action='store_true'
+    )
     args = parser.parse_args()
 
 
@@ -123,9 +129,14 @@ def main():
         
         with open(output, 'w') as f:
             json.dump(problems, f)
-
+        
     else:
         raise Exception("Argument type accepts only (single, multiple)")
+    
+    if args.push:
+        db = Db_action()
+        db.create_problem(problems[0])
+        
 
 
 if __name__ == "__main__":
