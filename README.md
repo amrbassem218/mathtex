@@ -217,11 +217,3 @@ mathtex/
 │   └── database_action.py  # Database operations
 └── pandoc_files/        # Example LaTeX files
 ```
-
-## License
-
-[Add your license information here]
-
-## Contributing
-
-[Add contribution guidelines if applicable]
