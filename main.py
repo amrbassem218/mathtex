@@ -7,17 +7,22 @@ from pathlib import Path
 import re
 import json
 from utils.database_action import Db_action
+import uuid
+import requests
+
+
 def read_file(path):
     if not os.path.exists(path):
         raise Exception("File doesn't exist")
     with open(path, "r") as f:
         return f.read()
 
+
 # Check path if file/dir exists if not creates them, optionally takes text to add into files
 def check_and_create(path, replace, text=None):
     final_path = Path(path).resolve()
     parent_path = final_path.parent
-    if(not parent_path.exists()):
+    if not parent_path.exists():
         os.makedirs(parent_path)
     if not replace:
         counter = 1
@@ -25,7 +30,9 @@ def check_and_create(path, replace, text=None):
             if os.path.isfile(final_path):
                 print("", final_path)
                 file_extension = re.search(r"\.\w{2,5}$", str(final_path))
-                final_path = Path(f"{Path(path).name}{counter}{file_extension.group()}").resolve()
+                final_path = Path(
+                    f"{Path(path).name}{counter}{file_extension.group()}"
+                ).resolve()
             elif os.path.isdir(final_path):
                 final_path = Path(f"{Path(path).name}{counter}/").resolve()
             counter += 1
@@ -37,6 +44,7 @@ def check_and_create(path, replace, text=None):
     elif not Path(final_path).exists():
         os.mkdir(final_path)
     return final_path
+
 
 def get_html_from_tex(tex):
     if len(tex) == 0:
@@ -53,6 +61,7 @@ def get_html_from_tex(tex):
     ]
     res = run(commands, stdin=PIPE, stdout=PIPE)
     return res.stdout
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -76,18 +85,22 @@ def main():
         default="multiple",
     )
     parser.add_argument(
-        "-r", "--replace", help="replace the output directory if present", default=False, action='store_true'
+        "-r",
+        "--replace",
+        help="replace the output directory if present",
+        default=False,
+        action="store_true",
     )
     parser.add_argument(
-        "-p","--push",
+        "-p",
+        "--push",
         help="Push the problems to DB",
         default=False,
-        action='store_true'
+        action="store_true",
     )
     args = parser.parse_args()
 
-
-    # Getting input 
+    # Getting input
     args.input = Path(args.input).resolve()
     if not os.path.exists(args.input):
         raise Exception("File Path doesn't exist")
@@ -96,20 +109,18 @@ def main():
     if not input_text or len(input_text) == 0:
         raise Exception("The file couldn't be read or it's empty")
 
-    
     # Getting output
-    if args.output == None: 
-        args.output = args.input.name.split('.')[0] + '.json' 
+    if args.output == None:
+        args.output = args.input.name.split(".")[0] + ".json"
     else:
-        p_output = Path(args.output) 
+        p_output = Path(args.output)
         if len(p_output.suffix) == 0:
-            args.output = args.input.name.split('.')[0] + '.json' 
+            args.output = args.input.name.split(".")[0] + ".json"
             output_dir = check_and_create(p_output, args.replace)
             args.output = os.path.join(output_dir, args.output)
 
     args.output = Path(args.output)
-    
-    
+
     if args.type == "single":
         pass
     elif args.type == "multiple":
@@ -120,24 +131,42 @@ def main():
         if len(problems) == 0:
             print("Couldn't get problems or file doesn't contain any")
 
-        
         output = check_and_create(args.output, args.replace)
         for i, problem in enumerate(problems):
             # print(i, problem)
-            html = get_html_from_tex(problem['latex'])
-            problems[i]["html"] = html.decode('utf-8') 
-        
-        with open(output, 'w') as f:
+            html = get_html_from_tex(problem["description_latex"])
+            problems[i]["description_html"] = html.decode("utf-8")
+
+        with open(output, "w") as f:
             json.dump(problems, f)
-        
+
     else:
         raise Exception("Argument type accepts only (single, multiple)")
-    
-    if args.push:
-        db = Db_action()
-        db.create_problem(problems[0])
-        
 
+    if args.push:
+        # Create contest
+        contest_name = args.source.capitalize()
+        contest_id = uuid.uuid4()
+        create_contest_url = f"http://localhost:3000/api/contests/{contest_id}"
+        response = requests.post(create_contest_url, json={"name": contest_name, "id": str(contest_id)}, headers={"x-api-key": os.getenv("API_KEY")})
+
+        print("Status code:", response.status_code)
+        print("Response text:", response.text)
+
+        # Create problems
+        if response:
+            for problem in problems:
+                problem_id = uuid.uuid4()
+                create_problem_url = f"http://localhost:3000/api/problems/{problem_id}"
+                problem_json = {**problem, "contest_id": str(contest_id)}
+                print("problem_json")
+                print(problem_json)
+                response = requests.post(create_problem_url, json=problem_json, headers={"x-api-key": os.getenv("API_KEY")})
+                print("status code:", response.status_code)
+                print("Response text:", response.text)
+
+        else:
+            print("Failed to create contest")
 
 if __name__ == "__main__":
     main()

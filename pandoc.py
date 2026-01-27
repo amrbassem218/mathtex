@@ -20,8 +20,8 @@ def get_problems_from_pandoc_tex(text):
   
   for index,positions in enumerate(problems_positions):
     problem = {
-      "title": titles[index],
-      "latex":text[positions['st']:positions['end']].strip(),
+      "name": titles[index],
+      "description_latex":text[positions['st']:positions['end']].strip(),
     }
     problems.append(problem) 
   
