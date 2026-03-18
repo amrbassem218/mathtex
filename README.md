@@ -1,16 +1,38 @@
-# LaTeX Contest to HTML Converter
+<div align="center">
+  <h1>Mathtex</h1>
+  <span>Latex into Anything</span>
+</div>
 
-A command-line tool that converts LaTeX contest files into structured JSON format with HTML problem descriptions. The tool extracts problems from LaTeX files, converts them to HTML using Pandoc, and optionally pushes them to a database.
+## What is Mathtex?
+
+
+Mathtex is a command-line (CLI) tool built for [Numitz](https://github.com/amrbassem218/numitz) that converts LaTeX contest files into structured JSON format with HTML problem descriptions that are renderable by [Mathjax](https://www.mathjax.org/). The tool extracts problems from LaTeX files, converts them to HTML using [pandoc](https://pandoc.org/), and optionally pushes them into a database.
+
+
+## Table of contents
+- [What is Mathtex?](#what-is-mathtex)
+- [Problem it is solving](#problem-it-is-solving)
+- [Features](#features)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Formatting](#formatting)
+- [LaTeX File Format](#latex-file-format)
+- [Project Structure](#project-structure)
+
+## Problem it is solving
+We wanted to gather whole latex files from places like the [putnam archive](https://kskedlaya.org/putnam-archive/) or convert whole books into latex files. But the problem is for them to be loaded on the site they need to be separated into individual problems with meta-data like their answer, editorial, the contest it's from and its source for it to be able to proceed for the next processes by the categorization models.
 
 ## Features
 
 - Extract problems from LaTeX contest files
-- Convert LaTeX problem descriptions to HTML with MathJax support
+- Convert LaTeX problem descriptions to HTML with MathJax support using [pandoc](https://pandoc.org/)
 - Export problems to JSON format
 - Optional database integration for pushing problems to an API
-- Support for multiple problem extraction from structured LaTeX files
 
-## Prerequisites
+## Installation
+
+### Prerequisites
 
 Before installing this tool, ensure you have the following:
 
@@ -30,20 +52,18 @@ Before installing this tool, ensure you have the following:
      ```bash
      brew install pandoc
      ```
-   - **Windows**: Download from [pandoc.org/installing.html](https://pandoc.org/installing.html)
-   
-   Verify installation:
-   ```bash
-   pandoc --version
+   - **Windows**: Download from [pandoc.org/installing.html](https://pandoc.org/installing.html)  
+
+Verify installation:
+```bash
+pandoc --version
    ```
 
-3. **pip** - Python package manager (usually comes with Python)
-
-## Installation
-
+### Tool installation
 1. **Clone or download this repository**:
    ```bash
-   cd /path/to/mathtex
+   git clone https://github.com/amrbassem218/mathtex
+   cd mathtex/
    ```
 
 2. **Install Python dependencies**:
@@ -142,7 +162,9 @@ This will:
 
 **Note**: Ensure your `.env` file is configured with the `API_KEY` before using `--push`.
 
-## Output Format
+## Formatting
+
+### Output Format
 
 The tool generates a JSON file containing an array of problem objects. Each problem has the following structure:
 
@@ -161,7 +183,7 @@ The tool generates a JSON file containing an array of problem objects. Each prob
 ]
 ```
 
-## LaTeX File Format
+### Input format
 
 The tool expects LaTeX files with problems formatted using `\item[Label]` syntax within an `itemize` environment:
 
@@ -175,33 +197,6 @@ Another problem description...
 \end{itemize}
 ```
 
-## Troubleshooting
-
-### Pandoc Not Found
-
-If you get an error that pandoc is not found:
-- Ensure pandoc is installed and available in your PATH
-- Verify with: `pandoc --version`
-
-### File Not Found
-
-If you get "File doesn't exist" error:
-- Check that the input file path is correct
-- Use absolute paths if relative paths don't work
-
-### Empty Output
-
-If no problems are extracted:
-- Verify your LaTeX file uses the `\item[Label]` format
-- Check that problems are within an `itemize` environment
-- Ensure the file is not empty
-
-### Database Push Errors
-
-If `--push` fails:
-- Verify your `.env` file exists and contains correct values
-- Check that the API endpoint is accessible
-- Ensure `API_KEY` is set correctly
 
 ## Project Structure
 

@@ -1,1 +1,5 @@
-[]
+{
+  "name": "A1",
+  "description_latex": "Determine all ordered pairs of real numbers $(a,b)$ such that the line $y = ax+b$ intersects the curve $y = \\ln(1+x^2)$ in exactly one point.",
+  "description_html": "<p>Determine all ordered pairs of real numbers <span\nclass=\"math inline\">\\((a,b)\\)</span> such that the line <span\nclass=\"math inline\">\\(y = ax+b\\)</span> intersects the curve <span\nclass=\"math inline\">\\(y = \\ln(1+x^2)\\)</span> in exactly one point.</p>\n"
+}
