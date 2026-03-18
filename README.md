@@ -13,11 +13,10 @@ Mathtex is a command-line (CLI) tool built for [Numitz](https://github.com/amrba
 - [What is Mathtex?](#what-is-mathtex)
 - [Problem it is solving](#problem-it-is-solving)
 - [Features](#features)
+- [Usage](#usage)
 - [Installation](#installation)
 - [Configuration](#configuration)
-- [Usage](#usage)
 - [Formatting](#formatting)
-- [LaTeX File Format](#latex-file-format)
 - [Project Structure](#project-structure)
 
 ## Problem it is solving
@@ -29,69 +28,6 @@ We wanted to gather whole latex files from places like the [putnam archive](http
 - Convert LaTeX problem descriptions to HTML with MathJax support using [pandoc](https://pandoc.org/)
 - Export problems to JSON format
 - Optional database integration for pushing problems to an API
-
-## Installation
-
-### Prerequisites
-
-Before installing this tool, ensure you have the following:
-
-1. **Python 3.8+** - Check your version:
-   ```bash
-   python3 --version
-   ```
-
-2. **Pandoc** - Required for LaTeX to HTML conversion
-   - **Linux**: 
-     ```bash
-     sudo apt-get install pandoc  # Debian/Ubuntu
-     # or
-     sudo yum install pandoc      # RHEL/CentOS
-     ```
-   - **macOS**: 
-     ```bash
-     brew install pandoc
-     ```
-   - **Windows**: Download from [pandoc.org/installing.html](https://pandoc.org/installing.html)  
-
-Verify installation:
-```bash
-pandoc --version
-   ```
-
-### Tool installation
-1. **Clone or download this repository**:
-   ```bash
-   git clone https://github.com/amrbassem218/mathtex
-   cd mathtex/
-   ```
-
-2. **Install Python dependencies**:
-   ```bash
-   pip install requests supabase python-dotenv
-   ```
-   
-   Or if you prefer using a virtual environment (recommended):
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   pip install requests supabase python-dotenv
-   ```
-
-## Configuration
-
-### Environment Variables
-
-If you plan to use the `--push` option to send problems to a database, create a `.env` file in the project root:
-
-```bash
-# .env file
-API_KEY=your_api_key_here
-SUPABASE_URL=your_supabase_url_here
-SUPABASE_SERVICE_KEY=your_supabase_service_key_here
-```
-
-The tool will automatically load these variables using `python-dotenv`.
 
 ## Usage
 
@@ -161,6 +97,69 @@ This will:
 3. Push each problem to the database via API
 
 **Note**: Ensure your `.env` file is configured with the `API_KEY` before using `--push`.
+
+## Installation
+
+### Prerequisites
+
+Before installing this tool, ensure you have the following:
+
+1. **Python 3.8+** - Check your version:
+   ```bash
+   python3 --version
+   ```
+
+2. **Pandoc** - Required for LaTeX to HTML conversion
+   - **Linux**: 
+     ```bash
+     sudo apt-get install pandoc  # Debian/Ubuntu
+     # or
+     sudo yum install pandoc      # RHEL/CentOS
+     ```
+   - **macOS**: 
+     ```bash
+     brew install pandoc
+     ```
+   - **Windows**: Download from [pandoc.org/installing.html](https://pandoc.org/installing.html)  
+
+Verify installation:
+```bash
+pandoc --version
+   ```
+
+### Tool installation
+1. **Clone or download this repository**:
+   ```bash
+   git clone https://github.com/amrbassem218/mathtex
+   cd mathtex/
+   ```
+
+2. **Install Python dependencies**:
+   ```bash
+   pip install requests supabase python-dotenv
+   ```
+   
+   Or if you prefer using a virtual environment (recommended):
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install requests supabase python-dotenv
+   ```
+
+## Configuration
+
+### Environment Variables
+
+If you plan to use the `--push` option to send problems to a database, create a `.env` file in the project root:
+
+```bash
+# .env file
+API_KEY=your_api_key_here
+SUPABASE_URL=your_supabase_url_here
+SUPABASE_SERVICE_KEY=your_supabase_service_key_here
+```
+
+The tool will automatically load these variables using `python-dotenv`.
 
 ## Formatting
 
