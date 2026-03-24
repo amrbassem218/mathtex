@@ -98,6 +98,13 @@ def main():
         default=False,
         action="store_true",
     )
+    parser.add_argument(
+        "-n",
+        "--name",
+        help="Add a name to the contest",
+        default=None,
+    )
+
     args = parser.parse_args()
 
     # Getting input
@@ -121,8 +128,15 @@ def main():
 
     args.output = Path(args.output)
 
+    contest_name = ""
+    if args.name:
+        contest_name = args.name
+    else:
+        contest_name = args.source.capitalize() + ": " + args.input[0:args.input.rfind(".")]
+
     if args.type == "single":
         pass
+
     elif args.type == "multiple":
         problems = []
         match args.source:
@@ -146,7 +160,10 @@ def main():
             # TODO: Replace with prediction model
             problems[i]["difficulty"] = (i+1)*100 * random.randint(1,5)
 
-            # 
+            problems[i]["full_name"] = problems[i]["name"] + ": " + contest_name
+
+            problems[i]["index_in_contest"] = i
+
         with open(output, "w") as f:
             json.dump(problems, f)
 
@@ -155,9 +172,9 @@ def main():
 
     if args.push:
         # Create contest
-        contest_name = args.source.capitalize()
+
         contest_id = uuid.uuid4()
-        create_contest_url = f"http://localhost:3000/api/contests/{contest_id}"
+        create_contest_url = f"https://numitz.vercel.app/api/contests/{contest_id}"
         response = requests.post(create_contest_url, json={"name": contest_name, "id": str(contest_id)}, headers={"x-api-key": os.getenv("API_KEY")})
 
         print("Status code:", response.status_code)
@@ -167,7 +184,7 @@ def main():
         if response:
             for problem in problems:
                 problem_id = uuid.uuid4()
-                create_problem_url = f"http://localhost:3000/api/problems/{problem_id}"
+                create_problem_url = f"https://numitz.vercel.app/api/problems/{problem_id}"
                 problem_json = {**problem, "contest_id": str(contest_id)}
                 print("problem_json")
                 print(problem_json)
