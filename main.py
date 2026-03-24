@@ -9,7 +9,7 @@ import json
 from utils.database_action import Db_action
 import uuid
 import requests
-
+import random
 
 def read_file(path):
     if not os.path.exists(path):
@@ -136,7 +136,17 @@ def main():
             # print(i, problem)
             html = get_html_from_tex(problem["description_latex"])
             problems[i]["description_html"] = html.decode("utf-8")
+            
+            # TODO: Add actual answers and editorials later
+            problems[i]["answer"] = 1
 
+            problems[i]["points"] = (i+1)*10
+
+            
+            # TODO: Replace with prediction model
+            problems[i]["difficulty"] = (i+1)*100 * random.randint(1,5)
+
+            # 
         with open(output, "w") as f:
             json.dump(problems, f)
 
